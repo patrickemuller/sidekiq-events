@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+lib = File.expand_path('lib', __dir__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+
 Gem::Specification.new do |s|
   s.required_ruby_version = '>= 3.2.0'
   s.name                  = 'sidekiq-events'
@@ -10,9 +13,20 @@ Gem::Specification.new do |s|
   s.email                 = ''
   s.homepage              = 'https://github.com/patrickemuller/sidekiq-events'
   s.license               = 'MIT'
-  s.files                 = Dir['{lib}/**/*', 'CHANGELOG.md', 'MIT-LICENSE', 'README.md']
+  s.files                 = Dir['{lib}/**/*', 'CHANGELOG.md', 'LICENSE', 'README.md', 'CODE_OF_CONDUCT.md']
   s.require_paths         = ['lib']
   s.extra_rdoc_files      = ['README']
+
+  if s.respond_to?(:metadata)
+    s.metadata['allowed_push_host'] = 'https://rubygems.org'
+
+    s.metadata['homepage_uri'] = s.homepage
+    s.metadata['changelog_uri'] = 'https://github.com/patrickemuller/sidekiq-events/CHANGELOG.md'
+    s.metadata['source_code_uri'] = 'https://github.com/patrickemuller/sidekiq-events'
+  else
+    raise 'RubyGems 2.0 or newer is required to protect against ' \
+          'public gem pushes.'
+  end
 
   s.post_install_message = '
 [SIDEKIQ-EVENTS]

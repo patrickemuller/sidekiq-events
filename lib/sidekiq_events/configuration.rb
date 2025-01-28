@@ -1,17 +1,15 @@
 # frozen_string_literal: true
 
-module Sidekiq
-  module Events
-    # @example
-    #  Sidekiq::Events.configure do |config|
-    #    config.enabled = true
-    #  end
-    class Configuration
-      attr_accessor :enabled
+module SidekiqEvents
+  # @example
+  #  SidekiqEvents::Configure.configure do |config|
+  #    config.enabled = true
+  #  end
+  class Configuration
+    attr_accessor :enabled
 
-      def initialize
-        @enabled = true
-      end
+    def initialize
+      @enabled = true
     end
 
     class << self
@@ -27,6 +25,10 @@ module Sidekiq
 
       def disabled?
         !configuration.enabled
+      end
+
+      def enabled?
+        configuration.enabled
       end
     end
   end
