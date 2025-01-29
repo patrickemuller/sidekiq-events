@@ -17,17 +17,14 @@ Gem::Specification.new do |s|
   s.require_paths         = ['lib']
   s.extra_rdoc_files      = ['README']
 
-  if s.respond_to?(:metadata)
-    s.metadata['allowed_push_host'] = 'https://rubygems.org'
+  raise 'RubyGems 2.0 or newer is required to protect against public gem pushes.' unless s.respond_to?(:metadata)
 
-    s.metadata['homepage_uri'] = s.homepage
-    s.metadata['changelog_uri'] = 'https://github.com/patrickemuller/sidekiq-events/CHANGELOG.md'
-    s.metadata['source_code_uri'] = 'https://github.com/patrickemuller/sidekiq-events'
-    s.metadata['rubygems_mfa_required'] = 'true'
-  else
-    raise 'RubyGems 2.0 or newer is required to protect against ' \
-          'public gem pushes.'
-  end
+  s.metadata['allowed_push_host'] = 'https://rubygems.org'
+
+  s.metadata['homepage_uri'] = s.homepage
+  s.metadata['changelog_uri'] = 'https://github.com/patrickemuller/sidekiq-events/CHANGELOG.md'
+  s.metadata['source_code_uri'] = 'https://github.com/patrickemuller/sidekiq-events'
+  s.metadata['rubygems_mfa_required'] = 'true'
 
   s.post_install_message = '
 [SIDEKIQ-EVENTS]
@@ -42,5 +39,8 @@ Thank you "Kris Leech" for the original implementation of wisper-sidekiq, and fo
 https://github.com/patrickemuller/sidekiq-events/blob/main/CHANGELOG.md
   '
 
+  s.add_dependency 'dry-struct', '~> 1.0'
+  s.add_dependency 'dry-types', '~> 1.8'
+  s.add_dependency 'wisper', '~> 3.0.0'
   s.add_dependency 'wisper-sidekiq', '~> 1.3.0'
 end

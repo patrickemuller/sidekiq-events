@@ -1,22 +1,31 @@
 # frozen_string_literal: true
 
 module SidekiqEvents
-  class Event < ::ActiveRecordValueObjects::AbstractValue
+  class Event < ::Dry::Struct
+    module Types
+      include Dry.Types()
+    end
+
     extend Forwardable
 
     attribute :_id, Types::String.optional
     attribute :_event_source, Types::String.optional
     attribute :emitted_at, Types::DateTime.optional
 
-    def_delegators 'self.class', :event_name, :i18n_event_name, :handler_name, :handler_name_for_channel,
-                   :sidekiq_options
+    def_delegators 'self.class', :event_name, :i18n_event_name, :handler_name, :handler_name_for_channel, :sidekiq_options
 
-    # @param [Hash] attrs
-    def self.new(attrs = {})
-      attrs[:_id] ||= ::SecureRandom.uuid
+    # rubocop:disable Style/OptionalBooleanParameter
+    def self.new(attributes = default_attributes, safe = false, &)
+      # if optional parameters are missing, set them to nil
+      schema.each do |key|
+        attributes[key.name] = nil if key.optional? && !attributes.key?(key.name)
+      end
+
+      attributes[:_id] = SecureRandom.uuid
 
       super
     end
+    # rubocop:enable Style/OptionalBooleanParameter
 
     # Collection of channel names to try for this event
     #
@@ -45,11 +54,11 @@ module SidekiqEvents
     end
 
     def emitted_by_class?(klass)
-      event_source.present? && event_source == klass
+      event_source && event_source == klass.to_s
     end
 
     def event_source
-      _event_source&.safe_constantize
+      _event_source
     end
 
     def self.event_name(event_name = nil)

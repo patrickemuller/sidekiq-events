@@ -66,6 +66,8 @@ that will handle the events you emitted, and process them in the background.
 
 ```ruby
 class SomeOrderCommand
+  include SidekiqEvents::Handler
+
   def call(order_identifier, some_named_argument: nil)
     order = ::Order.find_by(id: order_identifier).or(::Order.find_by(uuid: order_identifier))
     # .... your implementation

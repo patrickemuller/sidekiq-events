@@ -1,37 +1,13 @@
 # frozen_string_literal: true
 
 module SidekiqEvents
-  class Handler
-    include ::Wisper::Subscribe
-
+  module Handler
     def self.included(base)
       base.extend(ClassMethods)
-      return if defined?(Rails) && Rails.env.test?
-
-      unsubscribe(base)
-    end
-
-    def handle(*klass, async: true, event_name: nil, sidekiq_options: { queue: 'events' }, prevent_loops: true, &)
-      klass.each do |klass_name|
-        handle_event(klass_name, async: async, event_name: event_name, sidekiq_options: sidekiq_options, prevent_loops: prevent_loops, &)
-      end
-    end
-
-    def handle_event(klass, async: true, event_name: nil, sidekiq_options: { queue: 'events' }, prevent_loops: true, &)
-      handler_name = event_name ? "handle_#{event_name}" : klass.handler_name
-      event_name ||= klass.event_name
-      event_sidekiq_options ||= sidekiq_options || klass.sidekiq_options
-      event_queue ||= event_sidekiq_options[:queue]
-
-      log_subscription(event_queue, event_name, async)
-      subscribe(self, async: async, on: event_name)
-      define_event_handler(event_name, klass, prevent_loops, event_queue)
-      define_method(handler_name, &)
-      define_sidekiq_options(event_sidekiq_options) if sidekiq_options.present?
     end
 
     def handle!(event)
-      raise NoHandlerError, "Expected to handle at least one of #{event.channels.join(', ')}" unless handles?(event)
+      raise SidekiqEvents::Errors::NoHandlerError, "Expected to handle at least one of #{event.channels.join(', ')}" unless handles?(event)
 
       event.handlers.each do |handler_name|
         next unless respond_to?(handler_name)
@@ -45,26 +21,57 @@ module SidekiqEvents
       event.handlers.any? { |handler_name| respond_to?(handler_name) }
     end
 
-    private
+    module ClassMethods
+      attr_accessor :logger
 
-    def log_subscription(event_queue, event_name, async)
-      logger.debug("[#{event_queue}] Subscribing #{self} to #{event_name} #{async ? 'asynchronously' : 'synchronously'}")
-    end
+      def handle(*klass, async: true, event_name: nil, sidekiq_options: { queue: 'events' }, prevent_loops: true, &)
+        @logger ||= SidekiqEvents::Configuration.configuration.logger
 
-    def define_event_handler(event_name, klass, prevent_loops, event_queue)
-      define_singleton_method(event_name) do |event|
-        event = klass.build(event)
-        raise ArgumentError, "[#{event_queue}] Event #{event.event_name} was not valid" unless event.valid?
-
-        logger.debug("[#{event_queue}] Handling Event #{event_name}")
-        logger.debug("[#{event_queue}] attrs: #{event.attributes}")
-
-        new.handle!(event) unless event.emitted_by_class?(self) && prevent_loops
+        klass.each do |klass_name|
+          handle_event(klass_name, async: async, event_name: event_name, sidekiq_options: sidekiq_options, prevent_loops: prevent_loops, &)
+        end
       end
-    end
 
-    def define_sidekiq_options(event_sidekiq_options)
-      define_singleton_method(:sidekiq_options) { event_sidekiq_options }
+      private
+
+      def handle_event(klass, async: true, event_name: nil, sidekiq_options: { queue: 'events' }, prevent_loops: true, &)
+        handler_name = event_name ? "handle_#{event_name}" : klass.handler_name
+        event_name ||= klass.event_name
+        event_sidekiq_options ||= sidekiq_options || klass.sidekiq_options
+        event_queue ||= event_sidekiq_options[:queue]
+
+        log_subscription(event_queue, event_name, async)
+        ::Wisper.subscribe(self, async: async, on: event_name)
+        define_event_handler(event_name, klass, prevent_loops, event_queue)
+
+        define_method(handler_name, &)
+
+        define_sidekiq_options(event_sidekiq_options) if sidekiq_options
+      end
+
+      def log_subscription(event_queue, event_name, async)
+        logger.info("[#{event_queue}] Subscribing #{self} to #{event_name} #{async ? 'asynchronously' : 'synchronously'}")
+      end
+
+      def define_event_handler(event_name, event_klass, prevent_loops, event_queue)
+        define_singleton_method(event_name) do |event|
+          # If it's a class, the attributes method should be available
+          # If not, it means this is a hash with the attributes already
+          event = event.attributes if event.respond_to?(:attributes)
+
+          event = event_klass.new(event)
+          raise ArgumentError, "[#{event_queue}] Event #{event.event_name} was not valid" unless event.valid?
+
+          logger.info("[#{event_queue}] Handling Event #{event_name}")
+          logger.info("[#{event_queue}] attributes: #{event.attributes}")
+
+          self.class.new.handle!(event) unless event.emitted_by_class?(self) && prevent_loops
+        end
+      end
+
+      def define_sidekiq_options(event_sidekiq_options)
+        define_singleton_method(:sidekiq_options) { event_sidekiq_options }
+      end
     end
   end
 end

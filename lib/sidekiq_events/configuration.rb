@@ -6,10 +6,12 @@ module SidekiqEvents
   #    config.enabled = true
   #  end
   class Configuration
+    attr_accessor :logger
     attr_reader :enabled
 
     def initialize
       @enabled = true
+      @logger = Logger.new($stdout)
     end
 
     def enabled=(value)
