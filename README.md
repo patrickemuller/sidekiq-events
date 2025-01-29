@@ -11,6 +11,14 @@ This gem was heavily inspired by the [Wisper](https://github.com/krisleech/wispe
 gem 'sidekiq-events', github: 'patrickemuller/sidekiq-events'
 ```
 
+It's also possible to enable/disable the gem in the application by setting the initializer for it:
+
+```ruby
+SidekiqEvents::Configuration.configure do |config|
+  config.enabled = ENV.fetch('SIDEKIQ_EVENTS_ENABLED', true)
+end
+```
+
 ### Usage
 
 Emitting new events is easy, and can be done like the following example:
@@ -90,10 +98,16 @@ emitter.(event)
 
 # Inspecting the event attributes
 event.attributes
-#=> { order_id: 1, order_uuid: 'abcd1234' }
+#=> {:order_id=>1, :order_uuid=>"abcd1234", :_id=>"3580d0d8-9312-4fa8-9a3c-91e3288f0701", :_event_source=>nil, :emitted_at=>nil}
 # Inspecting the emitter attributes
-emitter.attrs
-#=> { order_id: 1, order_uuid: 'abcd1234' }
+emitter.attributes
+#=> {:order_id=>1, :order_uuid=>"abcd1234", :_id=>"3580d0d8-9312-4fa8-9a3c-91e3288f0701", :_event_source=>"SidekiqEvents::Emitter", :emitted_at=>Tue, 28 Jan 2025 16:12:44 -0800, :_event_class=>"MyEventName"}
+
+# And after you emit the event, you can inspect the event attributes again to see the changes
+# It will contain the same attributes from the emitter, and you can use that to
+# check where the event was emitted from, useful for debugging
+event.attributes
+#=> {:order_id=>1, :order_uuid=>"abcd1234", :_id=>"3580d0d8-9312-4fa8-9a3c-91e3288f0701", :_event_source=>"SidekiqEvents::Emitter", :emitted_at=>Tue, 28 Jan 2025 16:12:44 -0800, :_event_class=>"MyEventName"}
 ```
 
 ### ROADMAP

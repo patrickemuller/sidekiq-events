@@ -2,6 +2,6 @@
 
 module SidekiqEvents
   module Errors
-    class NoHandlerError < ::NoMethodError; end
+    class DisabledError < ::StandardError; end
   end
 end

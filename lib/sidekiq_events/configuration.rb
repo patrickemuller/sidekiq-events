@@ -6,19 +6,21 @@ module SidekiqEvents
   #    config.enabled = true
   #  end
   class Configuration
-    attr_accessor :enabled
+    attr_reader :enabled
 
     def initialize
       @enabled = true
     end
 
+    def enabled=(value)
+      @enabled = to_boolean(value)
+    end
+
     class << self
-      # Provides a global configuration instance
       def configuration
         @configuration ||= Configuration.new
       end
 
-      # Yields the configuration instance for easy customization
       def configure
         yield(configuration)
       end
@@ -29,6 +31,19 @@ module SidekiqEvents
 
       def enabled?
         configuration.enabled
+      end
+    end
+
+    private
+
+    def to_boolean(value)
+      case value
+      when true, 'true', 'TRUE', '1', 1
+        true
+      when false, 'false', 'FALSE', '0', 0
+        false
+      else
+        raise ArgumentError, "Invalid value for boolean: #{value}"
       end
     end
   end

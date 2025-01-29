@@ -16,3 +16,6 @@ Style/Documentation:
 
 Metrics/AbcSize:
   Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false

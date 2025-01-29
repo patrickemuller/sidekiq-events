@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'logger'
 require 'wisper/sidekiq'
 require 'sidekiq_events/configuration'
 
@@ -11,9 +12,10 @@ module SidekiqEvents
 
     # @param event [SidekiqEvents::Event]
     def call(event)
+      @logger = Logger.new($stdout)
       @attributes = event.attributes
 
-      return logger.info("SidekiqEvents is disabled, the event won't be emitted") if SidekiqEvents::Configuration.disabled?
+      return "SidekiqEvents is disabled, the event won't be emitted" if SidekiqEvents::Configuration.disabled?
 
       # Event classes support a "valid" method, that will be checked in case you have rules for emitting events
       raise ArgumentError, "Event #{event.class} (#{event.event_name}) was not valid" if event.respond_to?(:valid?) && !event.valid?
