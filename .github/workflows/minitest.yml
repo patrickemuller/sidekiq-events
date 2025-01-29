@@ -15,4 +15,5 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-      - run: ruby -Ilib:test -e 'Dir.glob("./test/**/*_test.rb") { |file| require file }'
+      - name: Run the tests
+        run: bundle exec rake

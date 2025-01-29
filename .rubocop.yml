@@ -1,9 +1,11 @@
 require:
   - rubocop
+  - rubocop-rake
   - rubocop-minitest
 
 AllCops:
   NewCops: enable
+  TargetRubyVersion: 3.2
 
 Layout/LineLength:
   Enabled: false

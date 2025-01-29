@@ -1,11 +1,8 @@
 # frozen_string_literal: true
 
-lib = File.expand_path('lib', __dir__)
-$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-
 Gem::Specification.new do |s|
   s.required_ruby_version = '>= 3.2.0'
-  s.name                  = 'sidekiq-events'
+  s.name                  = 'sidekiq_events'
   s.version               = '1.0.0'
   s.summary               = 'Provides an easy interface to publish and subscribe to events with Wisper + Sidekiq'
   s.description           = 'Provides an easy interface to publish and subscribe to events with Wisper + Sidekiq'
@@ -13,7 +10,6 @@ Gem::Specification.new do |s|
   s.email                 = ''
   s.homepage              = 'https://github.com/patrickemuller/sidekiq-events'
   s.license               = 'MIT'
-  s.files                 = Dir['{lib}/**/*', 'CHANGELOG.md', 'LICENSE', 'README.md', 'CODE_OF_CONDUCT.md']
   s.require_paths         = ['lib']
   s.extra_rdoc_files      = ['README']
 
@@ -25,6 +21,16 @@ Gem::Specification.new do |s|
   s.metadata['changelog_uri'] = 'https://github.com/patrickemuller/sidekiq-events/CHANGELOG.md'
   s.metadata['source_code_uri'] = 'https://github.com/patrickemuller/sidekiq-events'
   s.metadata['rubygems_mfa_required'] = 'true'
+
+  # Specify which files should be added to the gem when it is released.
+  # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
+  gemspec = File.basename(__FILE__)
+  s.files = IO.popen(%w[git ls-files -z], chdir: __dir__, err: IO::NULL) do |ls|
+    ls.readlines("\x0", chomp: true).reject do |f|
+      (f == gemspec) ||
+        f.start_with?(*%w[bin/ test/ spec/ features/ .git .github appveyor Gemfile])
+    end
+  end
 
   s.post_install_message = '
 [SIDEKIQ-EVENTS]

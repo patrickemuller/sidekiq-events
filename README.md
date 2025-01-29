@@ -8,7 +8,7 @@ This gem was heavily inspired by the [Wisper](https://github.com/krisleech/wispe
 ### Installation
 
 ```ruby
-gem 'sidekiq-events', github: 'patrickemuller/sidekiq-events'
+gem 'sidekiq_events', github: 'patrickemuller/sidekiq-events'
 ```
 
 It's also possible to enable/disable the gem in the application by setting the initializer for it:

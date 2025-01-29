@@ -15,7 +15,7 @@ module SidekiqEvents
       # Map returns [true, true, true], which is the result
       # of the iterations, and not the `.each` itself
       events.map do |event|
-        { event: event, result: SidekiqEvents::Emitter.call(event) }
+        { event:, result: SidekiqEvents::Emitter.call(event) }
       end
     end
 

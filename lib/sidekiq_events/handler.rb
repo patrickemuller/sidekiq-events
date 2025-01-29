@@ -28,7 +28,7 @@ module SidekiqEvents
         @logger ||= SidekiqEvents::Configuration.configuration.logger
 
         klass.each do |klass_name|
-          handle_event(klass_name, async: async, event_name: event_name, sidekiq_options: sidekiq_options, prevent_loops: prevent_loops, &)
+          handle_event(klass_name, async:, event_name:, sidekiq_options:, prevent_loops:, &)
         end
       end
 
@@ -41,7 +41,7 @@ module SidekiqEvents
         event_queue ||= event_sidekiq_options[:queue]
 
         log_subscription(event_queue, event_name, async)
-        ::Wisper.subscribe(self, async: async, on: event_name)
+        ::Wisper.subscribe(self, async:, on: event_name)
         define_event_handler(event_name, klass, prevent_loops, event_queue)
 
         define_method(handler_name, &)
