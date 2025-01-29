@@ -80,9 +80,36 @@ class SomeOrderCommand
   
   # OR
   
-  handle [::MyEventName, ::AnotherEvent] do |event|
+  handle [::MyEventName, ::AnotherEvent], sidekiq_options: { queue: 'events', retry: 123 } do |event|
     self.(event.order_id || event.order_uuid)
   end
+end
+```
+
+### Using MultiEmitter
+
+If you need to emit multiple events at once, you can use the `MultiEmitter` class. Here is an example:
+
+```ruby
+# Define your events
+class EventOne < ::SidekiqEvents::Event
+  attribute :data, Types::String
+end
+
+class EventTwo < ::SidekiqEvents::Event
+  attribute :info, Types::String
+end
+
+# Create instances of your events
+event_one = EventOne.new(data: 'example data')
+event_two = EventTwo.new(info: 'example info')
+
+# Emit multiple events at once
+results = Sidekiq::Events::MultiEmitter.call([event_one, event_two])
+
+# Inspect the results
+results.each do |result|
+  puts "Event: #{result[:event].class.name}, Result: #{result[:result]}"
 end
 ```
 
