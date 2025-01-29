@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-require 'minitest/autorun'
-require 'sidekiq_events'
+require 'test_helper'
 
 describe SidekiqEvents::Configuration do
   before do

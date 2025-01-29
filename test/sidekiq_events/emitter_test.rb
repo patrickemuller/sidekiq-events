@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-require 'minitest/autorun'
-require 'sidekiq_events'
+require 'test_helper'
 
 class MockEmitter < SidekiqEvents::Emitter
   # Used to test if the _event_source is set to the inherited class, or this one

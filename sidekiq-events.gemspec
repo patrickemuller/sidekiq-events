@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
     s.metadata['homepage_uri'] = s.homepage
     s.metadata['changelog_uri'] = 'https://github.com/patrickemuller/sidekiq-events/CHANGELOG.md'
     s.metadata['source_code_uri'] = 'https://github.com/patrickemuller/sidekiq-events'
+    s.metadata['rubygems_mfa_required'] = 'true'
   else
     raise 'RubyGems 2.0 or newer is required to protect against ' \
           'public gem pushes.'
@@ -42,5 +43,4 @@ https://github.com/patrickemuller/sidekiq-events/blob/main/CHANGELOG.md
   '
 
   s.add_dependency 'wisper-sidekiq', '~> 1.3.0'
-  s.metadata['rubygems_mfa_required'] = 'true'
 end

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'wisper/sidekiq'
-
 module SidekiqEvents
   class Handler
     include ::Wisper::Subscribe

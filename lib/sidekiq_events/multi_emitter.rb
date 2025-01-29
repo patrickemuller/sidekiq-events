@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'wisper/sidekiq'
-
 module SidekiqEvents
   # This class is responsible for emitting multiple events at once
   class MultiEmitter

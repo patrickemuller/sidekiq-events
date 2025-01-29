@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require 'logger'
-require 'wisper/sidekiq'
-require 'sidekiq_events/configuration'
-
 module SidekiqEvents
   class Emitter
     include ::Wisper::Publisher

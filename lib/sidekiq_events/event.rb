@@ -1,10 +1,5 @@
 # frozen_string_literal: true
 
-require 'date'
-require 'securerandom'
-require 'forwardable'
-require 'active_record_value_objects'
-
 module SidekiqEvents
   class Event < ::ActiveRecordValueObjects::AbstractValue
     extend Forwardable
