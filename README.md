@@ -7,6 +7,10 @@ This gem was heavily inspired by the [Wisper](https://github.com/krisleech/wispe
 
 ### Installation
 
+This gem WON'T work with ruby 3.2 or 3.1 due to dependencies with Zeitwerk-2.7.1.
+It's recommended to use ruby 3.3 or newer.
+jRuby is also not tested, you should try yourself.
+
 ```ruby
 gem 'sidekiq_events', github: 'patrickemuller/sidekiq-events'
 ```
