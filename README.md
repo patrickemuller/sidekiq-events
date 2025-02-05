@@ -143,7 +143,40 @@ event.attributes
 #=> {:order_id=>1, :order_uuid=>"abcd1234", :_id=>"3580d0d8-9312-4fa8-9a3c-91e3288f0701", :_event_source=>"SidekiqEvents::Emitter", :emitted_at=>Tue, 28 Jan 2025 16:12:44 -0800, :_event_class=>"MyEventName"}
 ```
 
-### ROADMAP
+## Contributing
+
+### Multiple Ruby/Gemfile versions
+This gem uses multiple ruby versions and gemfiles to test the compatibility with more recent
+versions of ruby.
+If you wish to pull this gem locally and make changes, you'll have to install the gems for a specific
+ruby version.
+
+Let's say you're trying to test/improve it agains the ruby 3.3. You can install the dependencies like this:
+
+```bash
+BUNDLE_GEMFILE=ruby3.3.gemfile bundle install
+OR
+bundle install --gemfile="ruby3.3.gemfile"
+```
+
+There is another way, involving installing [`direnv`](https://github.com/direnv/direnv) and creating a `.envrc` file 
+with the following content, but this is not support by default since this would be an Environment specific kind of setup. 
+
+```bash
+export BUNDLE_GEMFILE=ruby3.3.gemfile
+```
+
+It's a bit annoying to do it like that, but this is the only way to check multiple Ruby/Gemfile
+versions and make sure the Gem work with as many versions as possible.
+
+### Opening Pull Requests
+
+There is no default template for opening Github issues or pull request, just make sure you include
+all information needed to debug/understand the issue you're facing or the feature you're trying to implement.
+Be gentle, respect others, and provide meaningful information to those who will review your code (with test scenarios).
+Other than that, be a good person and help others to improve the gem!
+
+## ROADMAP
 
 - Add support for debouncing events so they don't process more than one time
 - Add support for the Zeitwerk autoloader
