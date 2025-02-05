@@ -8,10 +8,14 @@ module SidekiqEvents
 
     # @param event [SidekiqEvents::Event]
     def call(event)
-      @logger = Logger.new($stdout)
+      @logger ||= SidekiqEvents::Configuration.configuration.logger
       @attributes = event.attributes
 
-      return "SidekiqEvents is disabled, the event won't be emitted" if SidekiqEvents::Configuration.disabled?
+      if SidekiqEvents::Configuration.disabled?
+        message = "SidekiqEvents is disabled, the event won't be emitted"
+        @logger.info message
+        return message
+      end
 
       # Event classes support a "valid" method, that will be checked in case you have rules for emitting events
       raise ArgumentError, "Event #{event.class} (#{event.event_name}) was not valid" if event.respond_to?(:valid?) && !event.valid?
