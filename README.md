@@ -3,8 +3,6 @@
 The main goal of this gem is to provide a simple way to publish events and subscribe to them.
 This gem was heavily inspired by the [Wisper](https://github.com/krisleech/wisper) and [WisperSidekiq](https://github.com/krisleech/wisper-sidekiq) gems.
 
-### Use cases
-
 ### Installation
 
 This gem WON'T work with ruby 3.2 or 3.1 due to dependencies with Zeitwerk-2.7.1.
