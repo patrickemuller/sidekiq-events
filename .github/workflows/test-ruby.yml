@@ -1,0 +1,31 @@
+name: Setup Redis and Test Ruby
+on: [ push, pull_request ]
+jobs:
+  test-ruby:
+    services:
+      redis:
+        image: redis:7.2
+        ports: [ "6379:6379" ]
+        options: --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+          --entrypoint redis-server
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: [ '3.2', '3.3', '3.4' ]
+    env:
+      REDIS_URL: redis://localhost:6379/0
+      BUNDLE_GEMFILE: ${{ github.workspace }}/ruby${{ matrix.ruby }}.gemfile
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+          # https://github.com/ruby/setup-ruby/blob/master/README.md#dealing-with-a-corrupted-cache
+          cache-version: 1
+      - name: Run the tests
+        run: bundle exec rake
